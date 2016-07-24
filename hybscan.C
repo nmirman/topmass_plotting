@@ -35,61 +35,77 @@ void hybscan(){
    double whybcorr = 0;
    double sjsf = 0;
 
-   double statsq = 0.0047*0.0047/13;
+   double statsq = 0.0047*0.0047;
 
    // whyb = 0
    whyb = 0;
-   sjsf = 0.0047*0.0047*(1-whyb)/whyb;
-   whybcorr = statsq/(statsq+sjsf);
    ip = gstat->GetN();
-   gstat->SetPoint(ip, whybcorr, 0.383);
-   gsyst_tot->SetPoint(ip, whybcorr, 1.245);
-   gsyst_jes->SetPoint(ip, whybcorr, 0.08);
+   gstat->SetPoint(ip, whyb, 0.383);
+   gsyst_tot->SetPoint(ip, whyb, 1.245);
+   gsyst_jes->SetPoint(ip, whyb, 0.08);
 
-   // whyb = 0.8
-   whyb = 0.8;
-   sjsf = 0.0047*0.0047*(1-whyb)/whyb;
-   whybcorr = statsq/(statsq+sjsf);
+   // whyb = 0.25
+   whyb = 0.25;
    ip = gstat->GetN();
-   gstat->SetPoint(ip, whybcorr, 0.162);
-   gsyst_tot->SetPoint(ip, whybcorr, 1.026);
-   gsyst_jes->SetPoint(ip, whybcorr, 0.22);
+   gstat->SetPoint(ip, whyb, 0.32);
+   gsyst_tot->SetPoint(ip, whyb, 0.5*(1.08+1.35));
+   gsyst_jes->SetPoint(ip, whyb, 0.5*(0.16+0.17));
 
-   // whyb = 0.9
-   whyb = 0.9;
-   sjsf = 0.0047*0.0047*(1-whyb)/whyb;
-   whybcorr = statsq/(statsq+sjsf);
+   // whyb = 0.50
+   whyb = 0.50;
    ip = gstat->GetN();
-   gstat->SetPoint(ip, whybcorr, 0.159);
-   gsyst_tot->SetPoint(ip, whybcorr, 0.9235);
-   gsyst_jes->SetPoint(ip, whybcorr, 0.321);
+   gstat->SetPoint(ip, whyb, 0.21);
+   gsyst_tot->SetPoint(ip, whyb, 0.5*(0.97+1.11));
+   gsyst_jes->SetPoint(ip, whyb, 0.5*(0.285+0.295));
+
+   // whyb = 0.60
+   whyb = 0.60;
+   ip = gstat->GetN();
+   gstat->SetPoint(ip, whyb, 0.17);
+   gsyst_tot->SetPoint(ip, whyb, 0.5*(0.945+1.047));
+   gsyst_jes->SetPoint(ip, whyb, 0.5*(0.34+0.35));
+
+   // whyb = 0.75
+   whyb = 0.75;
+   ip = gstat->GetN();
+   gstat->SetPoint(ip, whyb, 0.19);
+   gsyst_tot->SetPoint(ip, whyb, 0.5*(0.93+0.98));
+   gsyst_jes->SetPoint(ip, whyb, 0.5*(0.41+0.42));
+
+   // whyb = 0.80
+   whyb = 0.80;
+   ip = gstat->GetN();
+   gstat->SetPoint(ip, whyb, 0.18);
+   gsyst_tot->SetPoint(ip, whyb, 0.5*(0.92+0.96));
+   gsyst_jes->SetPoint(ip, whyb, 0.5*(0.44+0.45));
+
+   // whyb = 0.85
+   whyb = 0.85;
+   ip = gstat->GetN();
+   gstat->SetPoint(ip, whyb, 0.16);
+   gsyst_tot->SetPoint(ip, whyb, 0.5*(0.93+0.96));
+   gsyst_jes->SetPoint(ip, whyb, 0.5*(0.47+0.48));
+
+   // whyb = 0.90
+   whyb = 0.90;
+   ip = gstat->GetN();
+   gstat->SetPoint(ip, whyb, 0.13);
+   gsyst_tot->SetPoint(ip, whyb, 0.5*(0.94+0.95));
+   gsyst_jes->SetPoint(ip, whyb, 0.5*(0.505+0.509));
 
    // whyb = 0.95
    whyb = 0.95;
-   sjsf = 0.0047*0.0047*(1-whyb)/whyb;
-   whybcorr = statsq/(statsq+sjsf);
    ip = gstat->GetN();
-   gstat->SetPoint(ip, whybcorr, 0.159);
-   gsyst_tot->SetPoint(ip, whybcorr, 0.9125);
-   gsyst_jes->SetPoint(ip, whybcorr, 0.41);
-
-   // whyb = 0.98
-   whyb = 0.98;
-   sjsf = 0.0047*0.0047*(1-whyb)/whyb;
-   whybcorr = statsq/(statsq+sjsf);
-   ip = gstat->GetN();
-   gstat->SetPoint(ip, whybcorr, 0.159);
-   gsyst_tot->SetPoint(ip, whybcorr, 0.9285);
-   gsyst_jes->SetPoint(ip, whybcorr, 0.4915);
+   gstat->SetPoint(ip, whyb, 0.13);
+   gsyst_tot->SetPoint(ip, whyb, 0.5*(0.946+0.950));
+   gsyst_jes->SetPoint(ip, whyb, 0.5*(0.535+0.539));
 
    // whyb = 1.0
    whyb = 1.0;
-   sjsf = 0.0047*0.0047*(1-whyb)/whyb;
-   whybcorr = statsq/(statsq+sjsf);
    ip = gstat->GetN();
-   gstat->SetPoint(ip, whybcorr, 0.147);
-   gsyst_tot->SetPoint(ip, whybcorr, TMath::Sqrt(0.99*0.99-0.17*0.17)); // subtract out PDF systs
-   gsyst_jes->SetPoint(ip, whybcorr, 0.58);
+   gstat->SetPoint(ip, whyb, 0.147);
+   gsyst_tot->SetPoint(ip, whyb, TMath::Sqrt(0.99*0.99-0.17*0.17)); // subtract out PDF systs
+   gsyst_jes->SetPoint(ip, whyb, 0.58);
 
    // additional graphs
    TGraph *gtot = new TGraph();

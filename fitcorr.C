@@ -15,6 +15,7 @@
 #include "TColor.h"
 #include "TROOT.h"
 #include "TFrame.h"
+#include "TLatex.h"
 
 #include "tdrStyle.C"
 #include "CMS_lumi.C"
@@ -25,7 +26,7 @@ void fitcorr(){
 
    setTDRStyle();
 
-   TFile *f = new TFile("rootfiles/fitresults_2D_calib.root");
+   TFile *f = new TFile("rootfiles/fitresults_2D_data.root");
    TTree *t = (TTree*)f->Get("FitResults");
 
    double mt=0, jsf=0, mcmass=0;
@@ -33,11 +34,11 @@ void fitcorr(){
    t->SetBranchAddress("jesfactor", &jsf);
    t->SetBranchAddress("mcmass", &mcmass);
 
-   TH2D *h2D = new TH2D("h2D",";M_{t} [GeV];JSF", 10, 171, 174, 10, 0.985, 1.015 );
+   TH2D *h2D = new TH2D("h2D",";M_{t} [GeV];JSF", 20, 170, 173, 20, 0.99, 1.04 );
    TGraph *g = new TGraph();
    for( int i=0; i < t->GetEntries(); i++ ){
       t->GetEntry(i);
-      if( mcmass != 172.5 ) continue;
+      //if( mcmass != 172.5 ) continue;
 
       h2D->Fill(mt, jsf);
       g->SetPoint(g->GetN(), mt, jsf);
@@ -64,11 +65,12 @@ void fitcorr(){
    std::cout << eigenval[0] << " " << eigenval[1] << endl;
 
    // convert to ellipse tilt and radius
-   double phi = 0.5*TMath::ATan( (3/0.03)*(2*rho*sigma_mt*sigma_jsf)/(sigma_mt*sigma_mt-sigma_jsf*sigma_jsf) );
+   //double phi = 0.5*TMath::ATan( (3/0.03)*(2*rho*sigma_mt*sigma_jsf)/(sigma_mt*sigma_mt-sigma_jsf*sigma_jsf) );
+   double phi = (180.0/TMath::Pi())*0.5*TMath::ATan( (2*rho*sigma_mt*sigma_jsf)/(sigma_mt*sigma_mt-sigma_jsf*sigma_jsf) );
    std::cout << "phi = " << phi << std::endl;
 
-   TEllipse *el = new TEllipse(mean_mt, mean_jsf, sigma_mt, sigma_jsf, 0, 360, phi);
-   TEllipse *el2 = new TEllipse(mean_mt, mean_jsf, 2*sigma_mt, 2*sigma_jsf, 0, 360, phi);
+   TEllipse *el = new TEllipse(mean_mt, mean_jsf, sqrt(eigenval[0]), sqrt(eigenval[1]), 0, 360, phi);
+   TEllipse *el2 = new TEllipse(mean_mt, mean_jsf, 2*sqrt(eigenval[0]), 2*sqrt(eigenval[1]), 0, 360, phi);
    
    /*
    TF2* fell = new TF2("fell","pow((x-[1])*cos([0])+(y-[2])*sin([0]),2)/[3] + pow((x-[1])*sin([0])-(y-[2])*cos([0]),2)/[4]",171,174,0.985,1.015);
@@ -105,7 +107,7 @@ void fitcorr(){
    el2->SetLineWidth(3);
    el2->Draw();
 
-   int iPeriod = 0;
+   int iPeriod = 2;
    int iPos = 33;
    lumi_sqrtS = "8 TeV";
    writeExtraText = true;
@@ -115,9 +117,15 @@ void fitcorr(){
    c->RedrawAxis();
    c->GetFrame()->Draw();
 
+   TLatex latex;
+   latex.SetNDC();
+   latex.SetTextSize(0.06);
+   latex.SetTextFont(42);
+   latex.DrawLatex(0.2, 0.84, "2D fit");
+
    c->Print("pdfplots/fitcorr.pdf");
 
-   delete c;
+   //delete c;
 
 
    return;

@@ -43,10 +43,12 @@ void slopetest(string distarg="", int mode=0){
    string dist = distarg;
    if( distarg.empty() ) dist = "mbl";
    string dim = "mt";
+   if( mode==1 ) dim = "jes";
 
    double p1=0, p2=0, p3=0;
    double dx = 0;
    double eps = 0.2;
+   int nument = 1;
    if( dim == "mt" ){
       p1 = 172.0; p2 = 172.5, p3 = 173.0;
    }
@@ -54,14 +56,22 @@ void slopetest(string distarg="", int mode=0){
       p1 = 0.999; p2 = 1.000, p3 = 1.001;
    }
    if( dist == "mbl" ){
-      dx = 2.8;
+      //dx = 2.8;
+      //nument = 109745;
+      cout << "Number of entries = " << nument << endl;
    }
    if( dist == "mt2_221" ){
-      dx = 1.9;
+      //dx = 1.9;
+      //nument = 15714;
+      cout << "Number of entries = " << nument << endl;
+   }
+   if( dist == "maos210" ){
+      //nument = 333120;
+      cout << "Number of entries = " << nument << endl;
    }
 
    string file = "rootfiles/plotsTemplates.root";
-   if( dist == "maos210" ) file = "rootfiles/plotsTemplatesMAOS.root";
+   //if( dist == "maos210" ) file = "rootfiles/plotsTemplatesMAOS.root";
    TFile *f = new TFile(file.c_str());
    TDirectory *d = (TDirectory*)f->Get((dim+"shape_"+dist+"_gp").c_str());
 
@@ -114,6 +124,8 @@ void slopetest(string distarg="", int mode=0){
 
    }
 
+   cout << "stat error = " << sqrt(1.0/(nument*d2sig)) << endl;
+
    // get mt dependence plot
    string canvas = "c_"+dist+"_gp_signal_JSF1000";
    if( mode == 1 ) canvas = "c_"+dist+"_gp_signal_jfact";
@@ -134,12 +146,19 @@ void slopetest(string distarg="", int mode=0){
    f172->SetLineColor(kGray+2);
    f178->SetLineColor(kGray);
 
+   // normalize sensitivity by number of entries
+   for( int i=0; i < gint->GetN(); i++ ) gint->GetY()[i] *= nument;
+
    TGaxis::SetMaxDigits(3);
    string xtitle = "M_{bl} [GeV]";
    if( dist == "mt2_221" ) xtitle = "M_{T2}^{bb} [GeV]";
    if( dist == "maos210" ) xtitle = "M_{bl#nu} [GeV]";
    f166->GetXaxis()->SetTitle(xtitle.c_str());
    f166->GetYaxis()->SetTitle("arb. units");
+
+   f166->GetXaxis()->SetTitleOffset(0.95);
+   f166->GetXaxis()->SetLabelOffset(0.015);
+   f166->GetYaxis()->SetLabelOffset(0.01);
 
    double maxscale = 1.0;
    if( dist != "maos210" ) maxscale = 1.2;
@@ -162,7 +181,7 @@ void slopetest(string distarg="", int mode=0){
 
    cf->Update();
 
-   double scalemod = 1.3;
+   double scalemod = 1.4;
    if( dist == "maos210" ) scalemod = 1.1;
 
    double rightmax = scalemod*1.1*TMath::MaxElement(gint->GetN(), gint->GetY());
@@ -184,7 +203,8 @@ void slopetest(string distarg="", int mode=0){
    axis->SetTitleSize(0.06);
    axis->SetTitleOffset(1);
    axis->SetLabelFont(42);
-   axis->SetLabelOffset(0.007);
+   //axis->SetLabelOffset(0.007);
+   axis->SetLabelOffset(0.01);
    axis->SetLabelSize(0.05);
 
    axis->SetTitle("[GeV^{-3}]");
@@ -198,10 +218,22 @@ void slopetest(string distarg="", int mode=0){
       ldim[3] = 0.489;
    }
    if( dist == "maos210" or true ){
+      /*
       ldim[0] = 0.494;
       ldim[1] = 0.731;
       ldim[2] = 0.824;
       ldim[3] = 0.909;
+      */
+      ldim[0] = 0.492;
+      ldim[1] = 0.675;
+      ldim[2] = 0.815;
+      ldim[3] = 0.904;
+   }
+   if( mode == 1 ){
+      ldim[0] = 0.556;
+      ldim[1] = 0.706;
+      ldim[2] = 0.936;
+      ldim[3] = 0.906;
    }
 
    TLegend* leg = new TLegend(ldim[0],ldim[1],ldim[2],ldim[3]);
@@ -209,7 +241,7 @@ void slopetest(string distarg="", int mode=0){
       leg->AddEntry( h166, "M_{t} = 166.5 GeV" );
       leg->AddEntry( h172, "M_{t} = 172.5 GeV" );
       leg->AddEntry( h178, "M_{t} = 178.5 GeV" );
-      leg->AddEntry( gint, "local shape sensitivity", "l" );
+      leg->AddEntry( gint, "sensitivity func.", "l" );
    }
    if( mode == 1 ){
       leg->AddEntry( h166, "JSF = 0.97" );
