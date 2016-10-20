@@ -23,6 +23,7 @@
 #include "TROOT.h"
 #include "TLatex.h"
 #include "TFrame.h"
+#include "TAxis.h"
 
 #include "tdrStyle.C"
 #include "CMS_lumi.C"
@@ -137,8 +138,39 @@ void slopetest(string distarg="", int mode=0){
    TF1 *f172 = (TF1*)(c2->GetListOfPrimitives()->At(4));
    TF1 *f178 = (TF1*)(c2->GetListOfPrimitives()->At(5));
    
-   TCanvas *cf = new TCanvas("cf","cf",800,600);
-   cf->cd();
+   int ydim = 800;
+   if( mode == 1 ) ydim = 600;
+   TCanvas *cf = new TCanvas("cf","cf",800,ydim);
+
+   if( mode == 0 ){
+      cf->SetTopMargin(0.1*(2.0/3));
+      cf->SetBottomMargin(0.12);
+      //cf->SetRightMargin(0.1);
+
+
+      //f166->GetXaxis()->SetTitleSize(0.047);
+      //f166->GetYaxis()->SetLabelSize(0.07);
+      //f166->GetYaxis()->SetTitleSize(0.08);
+      //f166->GetYaxis()->SetTitleOffset(0.95);
+      f166->GetXaxis()->SetLabelFont(42);
+      f166->GetYaxis()->SetLabelFont(42);
+      f166->GetXaxis()->SetTitleFont(42);
+      f166->GetYaxis()->SetTitleFont(42);
+
+      f166->GetXaxis()->SetTitleSize(0.14/3);
+      f166->GetXaxis()->SetLabelSize(0.14/3);
+      //f166->GetXaxis()->SetLabelSize(0.04);
+      f166->GetXaxis()->SetLabelFont(42);
+      if( dist == "mt2_221" or dist == "maos210" ){
+         f166->GetXaxis()->SetNdivisions(505);
+      }
+   }
+   if( mode == 1 ){
+      f166->GetXaxis()->SetTitleOffset(0.95);
+      f166->GetXaxis()->SetLabelOffset(0.015);
+      f166->GetYaxis()->SetLabelOffset(0.01);
+   }
+
    f166->SetLineWidth(2);
    f172->SetLineWidth(2);
    f178->SetLineWidth(2);
@@ -156,14 +188,23 @@ void slopetest(string distarg="", int mode=0){
    f166->GetXaxis()->SetTitle(xtitle.c_str());
    f166->GetYaxis()->SetTitle("arb. units");
 
-   f166->GetXaxis()->SetTitleOffset(0.95);
-   f166->GetXaxis()->SetLabelOffset(0.015);
-   f166->GetYaxis()->SetLabelOffset(0.01);
+   if( mode == 0 ){
+      f166->GetXaxis()->SetLabelOffset(0.02);
+      f166->GetYaxis()->SetLabelOffset(0.01);
+      f166->GetXaxis()->SetTitleOffset(1.18);
+      //f166->GetXaxis()->SetLabelOffset(0.01);
+      //f166->GetYaxis()->SetLabelOffset(0.01);
+   }
 
    double maxscale = 1.0;
    if( dist != "maos210" ) maxscale = 1.2;
    f166->SetMinimum(0);
-   f166->SetMaximum(1.25*f166->GetMaximum());
+   if( mode == 0 ){
+      f166->SetMaximum(1.75*f166->GetMaximum());
+   }
+   if( mode == 1 ){
+      f166->SetMaximum(1.25*f166->GetMaximum());
+   }
    f166->Draw();
    f172->Draw("same");
    f178->Draw("same");
@@ -179,10 +220,11 @@ void slopetest(string distarg="", int mode=0){
    h172->Draw("same");
    h178->Draw("same");
 
+   //pad->cd();
    cf->Update();
 
-   double scalemod = 1.4;
-   if( dist == "maos210" ) scalemod = 1.1;
+   double scalemod = 1.3;
+   if( dist == "maos210" ) scalemod = 1.3;
 
    double rightmax = scalemod*1.1*TMath::MaxElement(gint->GetN(), gint->GetY());
    double scale = gPad->GetUymax()/rightmax;
@@ -197,6 +239,7 @@ void slopetest(string distarg="", int mode=0){
 
    // formatting
    axis->SetLineColor(2);
+   axis->SetLineWidth(2);
    axis->SetLabelColor(2);
    axis->SetTitleColor(2);
    axis->SetTitleFont(42);
@@ -204,30 +247,29 @@ void slopetest(string distarg="", int mode=0){
    axis->SetTitleOffset(1);
    axis->SetLabelFont(42);
    //axis->SetLabelOffset(0.007);
-   axis->SetLabelOffset(0.01);
+   //axis->SetLabelOffset(0.01);
    axis->SetLabelSize(0.05);
 
    axis->SetTitle("[GeV^{-3}]");
    if( mode == 0 ) axis->Draw();
 
    double ldim [] = {0.237,0.333,0.567,0.510};
-   if( dist == "mt2_221" ){
-      ldim[0] = 0.220;
-      ldim[1] = 0.311;
-      ldim[2] = 0.531;
-      ldim[3] = 0.489;
-   }
-   if( dist == "maos210" or true ){
-      /*
-      ldim[0] = 0.494;
-      ldim[1] = 0.731;
-      ldim[2] = 0.824;
-      ldim[3] = 0.909;
-      */
-      ldim[0] = 0.492;
-      ldim[1] = 0.675;
-      ldim[2] = 0.815;
-      ldim[3] = 0.904;
+   if( dist == "maos210" ){
+      ldim[0] = 0.380;
+      ldim[1] = 0.600;
+      ldim[2] = 0.799;
+      ldim[3] = 0.768;
+
+   } else if( dist == "mt2_221" ){
+      ldim[0] = 0.174;
+      ldim[1] = 0.617;
+      ldim[2] = 0.594;
+      ldim[3] = 0.785;
+   } else {
+      ldim[0] = 0.204;
+      ldim[1] = 0.612;
+      ldim[2] = 0.623;
+      ldim[3] = 0.779;
    }
    if( mode == 1 ){
       ldim[0] = 0.556;
@@ -238,10 +280,10 @@ void slopetest(string distarg="", int mode=0){
 
    TLegend* leg = new TLegend(ldim[0],ldim[1],ldim[2],ldim[3]);
    if( mode == 0 ){
-      leg->AddEntry( h166, "M_{t} = 166.5 GeV" );
-      leg->AddEntry( h172, "M_{t} = 172.5 GeV" );
-      leg->AddEntry( h178, "M_{t} = 178.5 GeV" );
-      leg->AddEntry( gint, "sensitivity func.", "l" );
+      leg->AddEntry( h166, "M_{t}^{MC} = 166.5 GeV" );
+      leg->AddEntry( h172, "M_{t}^{MC} = 172.5 GeV" );
+      leg->AddEntry( h178, "M_{t}^{MC} = 178.5 GeV" );
+      leg->AddEntry( gint, "local shape sensitivity", "l" );
    }
    if( mode == 1 ){
       leg->AddEntry( h166, "JSF = 0.97" );
@@ -257,11 +299,13 @@ void slopetest(string distarg="", int mode=0){
    int iPeriod = 0;
    int iPos = 11;
    writeExtraText = true;
-   extraText = "Simulation Preliminary";
-   //lumi_sqrtS = "8 TeV";
+   //extraText = "Simulation Preliminary";
+   extraText = "Simulation";
+   lumi_sqrtS = "8 TeV";
    CMS_lumi( cf, iPeriod, iPos );   
 
 
+   /*
    float l = gPad->GetLeftMargin();
    float t = gPad->GetTopMargin();
    float r = gPad->GetRightMargin();
@@ -276,10 +320,17 @@ void slopetest(string distarg="", int mode=0){
    latex.SetTextAlign(31); 
    latex.SetTextSize(lumiTextSize*t);    
    latex.DrawLatex(1-r2,1-t+lumiTextOffset*t,"8 TeV");
+   */
+
 
    cf->Update();
-   cf->RedrawAxis();
-   cf->GetFrame()->Draw();
+   //TGaxis* axis2 = (TGaxis*)cf->FindObject("xaxis");
+   //axis2->SetNdivisions(505);
+   //cf->RedrawAxis();
+   if( mode == 0 and (dist == "mt2_221" or dist == "maos210") )
+      h178->GetXaxis()->SetNdivisions(505);
+   h178->Draw("sameaxis");
+   //cf->GetFrame()->Draw();
 
    string out = "pdfplots/sensitivity_mt_"+dist+".pdf";
    if( mode == 1 ) out = "pdfplots/sensitivity_jsf_"+dist+".pdf";

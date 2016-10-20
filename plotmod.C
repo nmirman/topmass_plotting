@@ -7,7 +7,9 @@
 #include "TObject.h"
 #include "TH1.h"
 #include "THStack.h"
+#include "TGraph.h"
 #include "TGraphErrors.h"
+#include "TGraphAsymmErrors.h"
 #include "TGAxis.h"
 #include <map>
 
@@ -21,7 +23,8 @@ void plotmod(){
    int iPos = 11;
    lumi_sqrtS = "8 TeV";
    writeExtraText = 1;
-   extraText = "Preliminary";
+   //extraText = "Preliminary";
+   extraText = "";
 
    TGaxis::SetMaxDigits(3);
 
@@ -30,11 +33,14 @@ void plotmod(){
    // ***************
 
    TFile *f = new TFile("rootfiles/plotsDataMC.root");
+   TFile *fsyst = new TFile("rootfiles/plotsysts.root");
 
    // mbl
    TCanvas *c = (TCanvas*)f->Get("cmbl_gpttbar172");
    TPad *p = (TPad*)c->FindObject("pad1");
    p->cd();
+
+   TGraphAsymmErrors* g = (TGraphAsymmErrors*)fsyst->Get("mbl_gpttbar172");
 
    TLegend *l = (TLegend*)c->FindObject("TPave");
    p->GetListOfPrimitives()->Remove(l);
@@ -58,13 +64,48 @@ void plotmod(){
 
    p->SetBottomMargin(0.03);
 
+   g->SetFillStyle(3001);
+   g->SetFillColor(15);
+   g->Draw("2");
+
+   TH1D* hdata = (TH1D*)c->FindObject("data_cl");
+   hdata->Draw("same");
+
    CMS_lumi( p, iPeriod, iPos );
    p->Update();
    p->RedrawAxis();
    p->GetFrame()->Draw();
 
+   p = (TPad*)c->FindObject("pad2");
+   p->cd();
+   p->SetBottomMargin(0.36);
+
    TH1* hratio = (TH1*)c->FindObject("hratio");
    hratio->GetXaxis()->SetTitle("M_{bl} [GeV]");
+   //hratio->GetXaxis()->SetLabelSize(0.12);
+   hratio->GetXaxis()->SetLabelOffset(0.06);
+   hratio->GetXaxis()->SetTitleOffset(1.18);
+
+   TGraphAsymmErrors* gratio = new TGraphAsymmErrors();
+   for(int i=0; i < g->GetN(); i++){
+      double x=0, y=0;
+      g->GetPoint(i,x,y);
+      gratio->SetPoint(i, x, 1);
+      gratio->SetPointError(i, g->GetErrorXlow(i), g->GetErrorXhigh(i), g->GetErrorYlow(i)/y, g->GetErrorYhigh(i)/y);
+   }
+
+   gratio->SetFillStyle(3001);
+   gratio->SetFillColor(15);
+   gratio->Draw("2");
+
+   hratio->Draw("same");
+
+   TLegend *lr = new TLegend(0.198, 0.774, 0.724, 0.935);
+   lr->SetFillStyle(0);
+   lr->SetBorderSize(0);
+   lr->SetLineStyle(0);
+   lr->AddEntry( gratio, "uncertainties (stat.+syst.)", "f" );
+   lr->Draw();
 
    c->Draw();
    c->Print("pdfplots/mbl_stack.pdf");
@@ -73,6 +114,8 @@ void plotmod(){
    c = (TCanvas*)f->Get("cmt2_221_gpttbar172");
    p = (TPad*)c->FindObject("pad1");
    p->cd();
+
+   g = (TGraphAsymmErrors*)fsyst->Get("mt2_221_gpttbar172");
 
    l = (TLegend*)c->FindObject("TPave");
    p->GetListOfPrimitives()->Remove(l);
@@ -95,13 +138,49 @@ void plotmod(){
 
    p->SetBottomMargin(0.03);
 
+   g->SetFillStyle(3001);
+   g->SetFillColor(15);
+   g->Draw("2");
+
+   hdata = (TH1D*)c->FindObject("data_cl");
+   hdata->Draw("same");
+
    CMS_lumi( p, iPeriod, iPos );
    p->Update();
    p->RedrawAxis();
    p->GetFrame()->Draw();
 
+   p = (TPad*)c->FindObject("pad2");
+   p->cd();
+   p->SetBottomMargin(0.36);
+
    hratio = (TH1*)c->FindObject("hratio");
    hratio->GetXaxis()->SetTitle("M_{T2}^{bb} [GeV]");
+   //hratio->GetXaxis()->SetLabelSize(0.12);
+   hratio->GetXaxis()->SetLabelOffset(0.06);
+   hratio->GetXaxis()->SetTitleOffset(1.18);
+   hratio->GetXaxis()->SetNdivisions(505);
+
+   gratio = new TGraphAsymmErrors();
+   for(int i=0; i < g->GetN(); i++){
+      double x=0, y=0;
+      g->GetPoint(i,x,y);
+      gratio->SetPoint(i, x, 1);
+      gratio->SetPointError(i, g->GetErrorXlow(i), g->GetErrorXhigh(i), g->GetErrorYlow(i)/y, g->GetErrorYhigh(i)/y);
+   }
+
+   gratio->SetFillStyle(3001);
+   gratio->SetFillColor(15);
+   gratio->Draw("2");
+
+   hratio->Draw("same");
+
+   lr = new TLegend(0.198, 0.774, 0.724, 0.935);
+   lr->SetFillStyle(0);
+   lr->SetBorderSize(0);
+   lr->SetLineStyle(0);
+   lr->AddEntry( gratio, "uncertainties (stat.+syst.)", "f" );
+   lr->Draw();
 
    c->Draw();
    c->Print("pdfplots/mt2_stack.pdf");
@@ -110,6 +189,8 @@ void plotmod(){
    c = (TCanvas*)f->Get("cmaos210_gpttbar172");
    p = (TPad*)c->FindObject("pad1");
    p->cd();
+
+   g = (TGraphAsymmErrors*)fsyst->Get("maos210_gpttbar172");
 
    l = (TLegend*)c->FindObject("TPave");
    p->GetListOfPrimitives()->Remove(l);
@@ -132,13 +213,49 @@ void plotmod(){
 
    p->SetBottomMargin(0.03);
 
+   g->SetFillStyle(3001);
+   g->SetFillColor(15);
+   g->Draw("2");
+
+   hdata = (TH1D*)c->FindObject("data_cl");
+   hdata->Draw("same");
+
    CMS_lumi( p, iPeriod, iPos );
    p->Update();
    p->RedrawAxis();
    p->GetFrame()->Draw();
 
+   p = (TPad*)c->FindObject("pad2");
+   p->cd();
+   p->SetBottomMargin(0.36);
+
    hratio = (TH1*)c->FindObject("hratio");
    hratio->GetXaxis()->SetTitle("M_{bl#nu} [GeV]");
+   //hratio->GetXaxis()->SetLabelSize(0.12);
+   hratio->GetXaxis()->SetLabelOffset(0.06);
+   hratio->GetXaxis()->SetTitleOffset(1.18);
+   hratio->GetXaxis()->SetNdivisions(505);
+
+   gratio = new TGraphAsymmErrors();
+   for(int i=0; i < g->GetN(); i++){
+      double x=0, y=0;
+      g->GetPoint(i,x,y);
+      gratio->SetPoint(i, x, 1);
+      gratio->SetPointError(i, g->GetErrorXlow(i), g->GetErrorXhigh(i), g->GetErrorYlow(i)/y, g->GetErrorYhigh(i)/y);
+   }
+
+   gratio->SetFillStyle(3001);
+   gratio->SetFillColor(15);
+   gratio->Draw("2");
+
+   hratio->Draw("same");
+
+   lr = new TLegend(0.198, 0.774, 0.724, 0.935);
+   lr->SetFillStyle(0);
+   lr->SetBorderSize(0);
+   lr->SetLineStyle(0);
+   lr->AddEntry( gratio, "uncertainties (stat.+syst.)", "f" );
+   lr->Draw();
 
    c->Draw();
    c->Print("pdfplots/maos_stack.pdf");
@@ -172,10 +289,17 @@ void plotmod(){
    p->RedrawAxis();
    p->GetFrame()->Draw();
 
+   latex.DrawLatex(0.2, 0.8, "M_{bl}");
+
+   p = (TPad*)c->FindObject("pad2");
+   p->cd();
+   p->SetBottomMargin(0.36);
+
    hratio = (TH1*)c->FindObject("hratio");
    hratio->GetXaxis()->SetTitle("M_{bl} [GeV]");
-
-   latex.DrawLatex(0.2, 0.8, "M_{bl}");
+   hratio->GetXaxis()->SetLabelSize(0.12);
+   hratio->GetXaxis()->SetLabelOffset(0.06);
+   hratio->GetXaxis()->SetTitleOffset(1.18);
 
    c->Draw();
    c->Print("pdfplots/plotresults_2dfit_mbl.pdf");
@@ -196,10 +320,17 @@ void plotmod(){
    p->RedrawAxis();
    p->GetFrame()->Draw();
 
+   latex.DrawLatex(0.2, 0.8, "M_{T2}^{bb}");
+
+   p = (TPad*)c->FindObject("pad2");
+   p->cd();
+   p->SetBottomMargin(0.36);
+
    hratio = (TH1*)c->FindObject("hratio");
    hratio->GetXaxis()->SetTitle("M_{T2}^{bb} [GeV]");
-
-   latex.DrawLatex(0.2, 0.8, "M_{T2}^{bb}");
+   hratio->GetXaxis()->SetLabelSize(0.12);
+   hratio->GetXaxis()->SetLabelOffset(0.06);
+   hratio->GetXaxis()->SetTitleOffset(1.18);
 
    c->Draw();
    c->Print("pdfplots/plotresults_2dfit_mt2.pdf");
@@ -223,10 +354,17 @@ void plotmod(){
    p->RedrawAxis();
    p->GetFrame()->Draw();
 
+   latex.DrawLatex(0.2, 0.8, "M_{bl}");
+
+   p = (TPad*)c->FindObject("pad2");
+   p->cd();
+   p->SetBottomMargin(0.36);
+
    hratio = (TH1*)c->FindObject("hratio");
    hratio->GetXaxis()->SetTitle("M_{bl} [GeV]");
-
-   latex.DrawLatex(0.2, 0.8, "M_{bl}");
+   hratio->GetXaxis()->SetLabelSize(0.12);
+   hratio->GetXaxis()->SetLabelOffset(0.06);
+   hratio->GetXaxis()->SetTitleOffset(1.18);
 
    c->Draw();
    c->Print("pdfplots/plotresults_1dfit_mbl.pdf");
@@ -247,10 +385,17 @@ void plotmod(){
    p->RedrawAxis();
    p->GetFrame()->Draw();
 
+   latex.DrawLatex(0.2, 0.8, "M_{T2}^{bb}");
+
+   p = (TPad*)c->FindObject("pad2");
+   p->cd();
+   p->SetBottomMargin(0.36);
+
    hratio = (TH1*)c->FindObject("hratio");
    hratio->GetXaxis()->SetTitle("M_{T2}^{bb} [GeV]");
-
-   latex.DrawLatex(0.2, 0.8, "M_{T2}^{bb}");
+   hratio->GetXaxis()->SetLabelSize(0.12);
+   hratio->GetXaxis()->SetLabelOffset(0.06);
+   hratio->GetXaxis()->SetTitleOffset(1.18);
 
    c->Draw();
    c->Print("pdfplots/plotresults_1dfit_mt2.pdf");
@@ -272,10 +417,17 @@ void plotmod(){
    p->RedrawAxis();
    p->GetFrame()->Draw();
 
+   latex.DrawLatex(0.2, 0.8, "M_{bl#nu}");
+
+   p = (TPad*)c->FindObject("pad2");
+   p->cd();
+   p->SetBottomMargin(0.36);
+
    hratio = (TH1*)c->FindObject("hratio");
    hratio->GetXaxis()->SetTitle("M_{bl#nu} [GeV]");
-
-   latex.DrawLatex(0.2, 0.8, "M_{bl#nu}");
+   hratio->GetXaxis()->SetLabelSize(0.12);
+   hratio->GetXaxis()->SetLabelOffset(0.06);
+   hratio->GetXaxis()->SetTitleOffset(1.18);
 
    c->Draw();
    c->Print("pdfplots/plotresults_maosfit_maos.pdf");
@@ -296,10 +448,17 @@ void plotmod(){
    p->RedrawAxis();
    p->GetFrame()->Draw();
 
+   latex.DrawLatex(0.2, 0.8, "M_{T2}^{bb}");
+
+   p = (TPad*)c->FindObject("pad2");
+   p->cd();
+   p->SetBottomMargin(0.36);
+
    hratio = (TH1*)c->FindObject("hratio");
    hratio->GetXaxis()->SetTitle("M_{T2}^{bb} [GeV]");
-
-   latex.DrawLatex(0.2, 0.8, "M_{T2}^{bb}");
+   hratio->GetXaxis()->SetLabelSize(0.12);
+   hratio->GetXaxis()->SetLabelOffset(0.06);
+   hratio->GetXaxis()->SetTitleOffset(1.18);
 
    c->Draw();
    c->Print("pdfplots/plotresults_maosfit_mt2.pdf");

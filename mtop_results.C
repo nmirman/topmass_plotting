@@ -144,8 +144,8 @@ void mtop_results(){
    gLeg->SetLineWidth(3);
    gLeg->SetMarkerSize(1.3);
    g2Leg->SetLineColor(12);
-   gLeg->Draw("EP");
-   g2Leg->Draw("E");
+   //gLeg->Draw("EP");
+   //g2Leg->Draw("E");
 
    TBox *band = new TBox(mtCMS-mtCMS_totDN, 0, mtCMS+mtCMS_totUP, 14);
    TBox *border = new TBox(mtCMS-mtCMS_totDN, 0, mtCMS+mtCMS_totUP, 14);
@@ -175,7 +175,11 @@ void mtop_results(){
    latex.DrawLatex(161, 6, "Hybrid fit");
    latex.DrawLatex(161, 4, "MAOS fit");
    latex.SetTextColor(2);
-   latex.DrawLatex(161, 2, "CMS comb. (Sep 2015)");
+   latex.DrawLatex(161, 2, "CMS combination");
+
+   latex.SetTextSize(0.025);
+   latex.DrawLatex(161.25, 1.5, "PRD 93, 2016, 072004");
+
 
    latex.SetTextColor(1);
    latex.SetTextSize(0.03);
@@ -199,12 +203,24 @@ void mtop_results(){
    latex.DrawLatex(176, 12, "(value #pm stat #pm syst)");
 
    latex.SetTextColor(12);
-   latex.DrawLatex(162.2, 11.5, "total");
-   latex.DrawLatex(164.2, 11.5, "stat");
+   //latex.DrawLatex(162.2, 11.5, "total");
+   //latex.DrawLatex(164.2, 11.5, "stat");
+
+   int iPeriod = 2;
+   int iPos = 11;
+   lumi_sqrtS = "8 TeV";
+   writeExtraText = false;
+   //extraText = "Preliminary";
+
+   c->SetTopMargin(0.06);
+   CMS_lumi( c, iPeriod, iPos );
+   c->Update();
+   c->RedrawAxis();
+   c->GetFrame()->Draw();
 
    c->Print("pdfplots/mtop_results.pdf");
 
-   delete c;
+   //delete c;
 
    return;
 }

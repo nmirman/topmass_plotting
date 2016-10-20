@@ -115,7 +115,7 @@ void fitcorr_hyb(){
    int iPeriod = 2;
    int iPos = 33;
    lumi_sqrtS = "8 TeV";
-   writeExtraText = true;
+   writeExtraText = false;
    CMS_lumi( c, iPeriod, iPos );
 
    c->Update();
